@@ -13,7 +13,21 @@
 <h1>
 	Hello Fabric BlockInfo!  
 </h1>
-<form  method="post" action="/blockResult">
+	<table>
+		<tr>
+			<td><strong>[Chain Information]</strong></td>
+		</tr>
+		<tr>
+			<td>height : ${chain.height}</td>
+		</tr>
+		<tr>
+			<td>currentBlockHash : ${chain.currentBlockHash}</td>
+		</tr>
+		<tr>
+			<td>previousBlockHash : ${chain.previousBlockHash}</td>
+		</tr>
+	</table>
+	<form  method="post" action="/hello/blockResult">
 	<table>
 		<tr>
 			<td><p>Block Id</p></td>
@@ -21,10 +35,22 @@
 		</tr>
 		
 		<tr>
-			<td><br><input type="submit" value="CHECK"></td>	
+			<td><br><input type="submit" value="CHECK"><br></td>	
 		</tr>
 	</table>
-</form>
+	</form>
+	
+	<form method="post" action="/hello/transactionResult">
+	<table>
+		<tr>
+			<td><p>Transaction Id</p></td>
+			<td><input type="text" placeholder="Transaction" name="Transaction" id="Transaction"></td>
+		</tr>
+		<tr>
+			<td><br><input type="submit" value="CHECK"></td>
+		</tr>
+	</table>
+	</form>
 
 </body>
 </html>

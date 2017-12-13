@@ -47,19 +47,7 @@
 		<tr>
 			<td>localLedger CommitTimestamp nanos : ${block.LgNanos}</td>
 		</tr>				
-		
-		<tr>
-			<td><strong>[Chain Information]</strong></td>
-		</tr>
-		<tr>
-			<td>height : ${chain.height}</td>
-		</tr>	
-		<tr>	
-			<td>currentBlockHash : ${chain.currentBlockHash}</td>
-		</tr>
-		<tr>	
-			<td>previousBlockHash : ${chain.previousBlockHash}</td>
-		</tr>		
+			
 	</table>
 
 </body>

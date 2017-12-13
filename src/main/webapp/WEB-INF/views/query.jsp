@@ -13,7 +13,7 @@
 <h1>
 	Hello Fabric Query!  
 </h1>
-<form  method="post" action="/queryUser">
+<form  method="post" action="/hello/queryUser">
 	<table>
 		<tr>
 			<td><p>User</p></td>

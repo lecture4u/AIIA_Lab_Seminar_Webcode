@@ -15,12 +15,8 @@
 </h1>
 
 
-<form  method="post" action="/insert">
+<form  method="post" action="/hello/insert">
 	<table>
-		<tr>
-			<td><p>From</p></td>
-			<td><input type="text" placeholder="From" name="From" id="From"></td>
-		</tr>
 		
 		<tr>
 			<td><p>To</p></td>

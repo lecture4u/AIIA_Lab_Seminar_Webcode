@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,7 @@ import com.google.gson.stream.JsonReader;
 import com.java.model.Data;
 import com.java.model.blockData;
 import com.java.model.chain;
+import com.java.model.transactions;
 import com.java.restcall.restTemplate;
 
 @Controller
@@ -34,6 +36,7 @@ public class HelloController {
 	private restTemplate rest;
 	private Map<String, Object> result;
 	private Map<String, Object> result2;
+	private boolean init = false;
 	
 	//메인화면(invoke창)
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -41,8 +44,12 @@ public class HelloController {
 		
 		this.rest = new restTemplate();
 		rest.enrollId();
-		//서버를 다시 실행할 때 마다 deploy가 블록체인 네트워크의 사용자 값를을 a=100, b=200으 초기화 시키기 때문에,이것에 대한 해결방법이 필요하다.
-		rest.deploy();
+		
+		if(init == false){
+			rest.deploy();
+			init = true;
+			System.out.println("Web Application Start!");
+		}
 		return "home";
 	}
 	
@@ -53,7 +60,7 @@ public class HelloController {
 		request.setCharacterEncoding("utf-8");
 
 		this.rest = new restTemplate();
-		rest.invoke((String)request.getParameter("From"), (String)request.getParameter("To"), (String)request.getParameter("Amount"));
+		rest.invoke((String)request.getParameter("To"), (String)request.getParameter("Amount"));
 		return "home";
 	}
 	
@@ -93,9 +100,79 @@ public class HelloController {
 	
 	//블록 정보 보는 창
 	@RequestMapping(value = "/blockInfo", method = RequestMethod.GET)
-	public String blockInfo(Model model) {
+	public String blockInfo(HttpServletRequest request, Model model) throws UnsupportedEncodingException{
+		
+		
+		this.result2 = new HashMap<String, Object>();
+		String output2;
+		
+		request.setCharacterEncoding("utf-8");
+
+		this.rest = new restTemplate();
+		output2 = rest.getData();
+		
+		//chain information
+		JsonReader reader2 = new JsonReader(new StringReader(output2));
+		reader2.setLenient(true);
+		chain chainData = new Gson().fromJson(reader2, chain.class);
+		
+		int height = Integer.parseInt(chainData.height) - 1;
+		
+		//체인 정보 넘겨주기
+		result2.put("height", height);
+		result2.put("currentBlockHash", chainData.currentBlockHash);
+		result2.put("previousBlockHash", chainData.previousBlockHash);
+		
+		model.addAttribute("chain", result2);
 
 		return "blockInfo";
+	}
+	
+	@RequestMapping(value = "transactionResult", method = RequestMethod.POST)
+	public String transactionResult(HttpServletRequest request, Model model) throws UnsupportedEncodingException{
+		
+		this.result = new HashMap<String, Object>();
+		String output;
+		
+		request.setCharacterEncoding("utf-8");
+		
+		this.rest = new restTemplate();
+		output = rest.getTranData((String)request.getParameter("Transaction"));
+		
+		JsonReader reader = new JsonReader(new StringReader(output));
+		reader.setLenient(true);
+		transactions Transactions = new Gson().fromJson(reader, transactions.class);
+		
+		System.out.println(Transactions.chaincodeID);
+		System.out.println(Transactions.payload);
+		System.out.println(Transactions.txid);
+		System.out.println(Transactions.type);
+		
+		byte[] decoded = Base64.decodeBase64(Transactions.payload);
+		String B64decoded = new String(decoded);
+		System.out.println(B64decoded);
+		
+		String b64[] = B64decoded.split("\n");
+		int idx = b64[4].indexOf("*");
+		String b64_value = b64[4].substring(0, idx);
+		String b64_enrollID = b64[4].substring(idx+2);
+		
+		System.out.println("b64 : " + b64[1]);//chaincodeID
+		System.out.println("b64 : " + b64[2]);//Method
+		System.out.println("b64 : " + b64[3]);//Key
+		System.out.println("b64 : " + b64[4]);//value+enrollID
+		System.out.println("b64 : " + b64_value);//Value
+		System.out.println("b64 : " + b64_enrollID);//EnrollID
+		
+		result.put("chaincodeID", Transactions.chaincodeID);
+		result.put("payload", Transactions.payload);
+		result.put("txid", Transactions.txid);
+		result.put("type", Transactions.type);
+		
+		model.addAttribute("transaction", result);
+		
+		
+		return "transactionResult";
 	}
 	
 	//블록 정보 확인시 발생
@@ -158,8 +235,10 @@ public class HelloController {
 		result.put("LgSeconds", blockdata.nonHashData.localLedgerCommitTimestamp.get("seconds"));
 		result.put("LgNanos", blockdata.nonHashData.localLedgerCommitTimestamp.get("nanos"));
 		
+		int height = Integer.parseInt(chainData.height) - 1;
+		
 		//체인 정보 넘겨주기
-		result2.put("height", chainData.height);
+		result2.put("height", height);
 		result2.put("currentBlockHash", chainData.currentBlockHash);
 		result2.put("previousBlockHash", chainData.previousBlockHash);
 		

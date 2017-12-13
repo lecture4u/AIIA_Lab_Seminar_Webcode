@@ -15,7 +15,15 @@ public class restTemplate {
 	private String uri;
 	private String result;
 	private String jsonData;
-	public static final String address = "http://172.17.0.2:7050/";
+	//public static final String address = "http://220.149.235.74:7050/";
+	public static final String address = "http://192.168.0.12:7050/";
+	public static final String Username = "admin";
+	public static final String Chaincodename = "ChaincodeLogSmartContract";
+	
+	//public static final String address = "http://220.149.235.74:8050/";
+	//public static final String address = "http://192.168.0.7:8050/";
+	//public static final String Username = "WebAppAdmin";
+	//public static final String Chaincodename = "ChaincodeLogSmartContract";
 	
 	//Get Method
 	public String Get(String input){
@@ -94,7 +102,13 @@ public class restTemplate {
 		            "    \"enrollSecret\" : \"Xurw3yU9zI0l\"\n" +
 		            "} ");
 		
+		String jsonData2 = ("{\n" +
+	            "    \"enrollId\": \"WebAppAdmin\",\n" +
+	            "    \"enrollSecret\" : \"DJY27pEnl16d\"\n" +
+	            "} ");
+		
 		this.result = Post(jsonData, uri);
+		//this.result = Post(jsonData2, uri);
 	    System.out.println(result);
 
 	}
@@ -108,12 +122,12 @@ public class restTemplate {
 		            "		\"params\": {\n" +
 		            "       	\"type\": 1,\n" +
 		            "			\"chaincodeID\":{\n" +
-		            "           	\"name\": \"ChaincodeLogSmartContract\"\n" +
+		            "           	\"name\": \"" + Chaincodename +"\"\n" +
 		            "			},\n"+		
 		            "           \"CtorMsg\": {\n" +
-		            "           	\"args\": [\"init\", \"a\", \"100\", \"b\", \"200\"]\n" +
+		            "           	\"args\": [\"init\"]\n" +
 		            "           },\n" +
-		            "           \"secureContext\": \"admin\"\n" +
+		            "           \"secureContext\": \"" + Username +"\"\n" +
 		            "       },\n" +
 		            "    \"id\": 1\n"+
 		            "}");
@@ -124,7 +138,7 @@ public class restTemplate {
 	
 	
 	//Invoke
-	public void invoke(String from, String to, String amount){
+	public void invoke(String to, String amount){
 		this.uri = address + "chaincode";
 		this.jsonData = ("{\n" +
 		            "    \"jsonrpc\": \"2.0\",\n" +
@@ -132,12 +146,12 @@ public class restTemplate {
 		            "		\"params\": {\n" +
 		            "       	\"type\": 1,\n" +
 		            "			\"chaincodeID\":{\n" +
-		            "           	\"name\": \"ChaincodeLogSmartContract\"\n" +
+		            "           	\"name\": \"" + Chaincodename +"\"\n" +
 		            "			},\n"+		
 		            "           \"CtorMsg\": {\n" +
-		            "           	\"args\": [\"invoke\", \""+ from +"\", \""+ to +"\", \""+ amount +"\"]\n" +
+		            "           	\"args\": [\"put\",\""+ to +"\", \""+ amount +"\"]\n" +
 		            "           },\n" +
-		            "           \"secureContext\": \"admin\"\n" +
+		            "           \"secureContext\": \"" + Username +"\"\n" +
 		            "       },\n" +
 		            "    \"id\": 3\n"+
 		            "}");
@@ -156,12 +170,12 @@ public class restTemplate {
 		            "		\"params\": {\n" +
 		            "       	\"type\": 1,\n" +
 		            "			\"chaincodeID\":{\n" +
-		            "           	\"name\": \"ChaincodeLogSmartContract\"\n" +
+		            "           	\"name\": \"" + Chaincodename +"\"\n" +
 		            "			},\n"+		
 		            "           \"CtorMsg\": {\n" +
 		            "           	\"args\": [\"query\", \""+ from +"\"]\n" +
 		            "           },\n" +  
-		            "            \"secureContext\": \"admin\"\n" +
+		            "            \"secureContext\": \"" + Username +"\"\n" +
 		            "       },\n" +
 		            "    \"id\": 5\n"+
 		            "}");
